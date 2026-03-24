@@ -60,13 +60,19 @@ st.markdown("""
 # ============================================================
 # LOAD DATA
 # ============================================================
+import os
+
 @st.cache_data
 def load_data():
-    df          = pd.read_csv('data/sample_data.csv', parse_dates=['InvoiceDate'])
-    customer_df = pd.read_csv('data/sample_data.csv')
-    return df, customer_df
+    # Get the path relative to the app directory
+    base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    data_path = os.path.join(base_path, 'data', 'sample_data.csv')
+    
+    # Load data (no InvoiceDate in sample_data, so don't parse it)
+    customer_df = pd.read_csv(data_path)
+    return customer_df
 
-df, customer_df = load_data()
+customer_df = load_data()
 
 
 # ============================================================
@@ -135,8 +141,6 @@ filtered_customers = filtered_customers[
     (filtered_customers['Recency'] >= recency_range[0]) &
     (filtered_customers['Recency'] <= recency_range[1])
 ]
-
-filtered_df = df.copy()
 
 
 # ============================================================
