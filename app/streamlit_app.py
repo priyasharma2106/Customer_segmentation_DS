@@ -57,13 +57,44 @@ def load_data():
     
     customer_df = pd.read_csv(data_path)
     
-    # Create a simple transaction df from sample data
-    df = customer_df.copy()
-    df['InvoiceDate'] = pd.date_range(start='2023-01-01', periods=len(df), freq='D')
-    df['TotalPrice'] = df['Monetary']
+    # Create synthetic transaction data with multiple transactions per customer over time
+    # This enables proper cohort analysis with retention variation
+    np.random.seed(42)
+    transactions = []
+    start_date = pd.Timestamp('2023-01-01')
+    
+    for idx, customer in customer_df.iterrows():
+        customer_id = customer['Customer ID']
+        num_transactions = np.random.randint(3, 12)  # 3-11 transactions per customer
+        
+        # First transaction (cohort month)
+        first_trans_month_offset = np.random.randint(0, 6)
+        first_date = start_date + pd.DateOffset(months=first_trans_month_offset)
+        
+        for trans_idx in range(num_transactions):
+            # Add random days and months between transactions
+            days_offset = np.random.randint(5, 45)
+            trans_date = first_date + pd.Timedelta(days=trans_idx * days_offset)
+            
+            # Skip if date goes beyond data range
+            if trans_date > start_date + pd.DateOffset(months=12):
+                break
+                
+            transactions.append({
+                'Customer ID': customer_id,
+                'Country': customer['Country'],
+                'Recency': customer['Recency'],
+                'Frequency': customer['Frequency'],
+                'Monetary': customer['Monetary'],
+                'Segment': customer['Segment'],
+                'InvoiceDate': trans_date,
+                'TotalPrice': np.random.uniform(20, 200),
+                'Invoice': f"{customer_id}-{trans_idx}"
+            })
+    
+    df = pd.DataFrame(transactions)
     df['DayOfWeek'] = df['InvoiceDate'].dt.dayofweek
     df['Hour'] = np.random.randint(0, 24, len(df))
-    df['Invoice'] = range(len(df))
     
     return df, customer_df
 
@@ -325,12 +356,19 @@ with tab3:
         fig = px.imshow(
             retention_table,
             color_continuous_scale='RdYlGn',
+            color_continuous_midpoint=50,
+            zmin=0,
+            zmax=100,
             labels=dict(x="Months Since First Purchase",
                         y="Cohort Month", color="Retention %"),
             title="Monthly Cohort Retention Heatmap (%)",
             text_auto='.0f'
         )
-        fig.update_layout(height=550, margin=dict(t=50))
+        fig.update_layout(
+            height=550, 
+            margin=dict(t=50),
+            coloraxis_colorbar=dict(thickness=15, len=0.7, x=1.02)
+        )
         st.plotly_chart(fig, use_container_width=True)
 
         # Average retention curve
