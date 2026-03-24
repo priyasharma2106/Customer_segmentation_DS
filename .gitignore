@@ -1,0 +1,14 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+*.egg-info/
+dist/
+build/
+.streamlit/
+.pytest_cache/
+*.csv
+*.xlsx
+*.xls
+data/*.csv
+!data/sample_data.csv
