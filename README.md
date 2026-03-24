@@ -2,6 +2,12 @@
 
 A comprehensive Streamlit dashboard for customer segmentation using RFM (Recency, Frequency, Monetary) analysis with K-Means clustering.
 
+## 🚀 Live Demo
+
+**[Open the Live Dashboard →](https://customersegmentationds.streamlit.app/)**
+
+Click the link above to access the interactive dashboard hosted on Streamlit Cloud!
+
 ## Features
 
 - **📊 Overview Tab**: Key metrics, revenue trends, and purchase activity heatmaps
@@ -150,6 +156,24 @@ streamlit run app/streamlit_app.py
 ## Dataset
 Uses the [UCI Online Retail dataset](https://archive.ics.uci.edu/ml/datasets/online+retail).
 A sample of 1,000 rows is included in `/data/sample_data.csv`.
+
+## Deployment
+
+The app is deployed on **Streamlit Cloud** at:
+```
+https://customersegmentationds.streamlit.app/
+```
+
+### Deploy Your Own
+1. Fork this repository
+2. Go to [share.streamlit.io](https://share.streamlit.io)
+3. Sign in with GitHub
+4. Click "New app"
+5. Select your forked repository and set main file to `app/streamlit_app.py`
+6. Click "Deploy"
+
+The app will auto-update whenever you push changes to the `main` branch!
+```
 
 ## Key learnings
 - Why log1p transformation matters for distance-based algorithms
